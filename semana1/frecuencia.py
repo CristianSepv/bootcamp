@@ -1,12 +1,3 @@
-#1. Separar la frase en palabras.
-#2. Preparar una tabla vacía de palabra -> cantidad.
-#3. Leer las palabras una por una:
-  # - si ya está en la tabla, sumarle 1
- #  - si no está, anotarla con 1
-#. Ordenar la tabla de mayor a menor cantidad.
-#5. Quedarme con las 3 primeras.
-
-
 def contador_de_palabras(texto):
     """
     Contador de palabras que separa estas mismas y devuelve las 3 primeras de mayor a menor
