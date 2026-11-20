@@ -10,10 +10,9 @@ class CuentaBancaria:
 
     def depositar(self,monto):  
         """ 
-            Resta el monto del saldo.
-        
-            Lanza ValueError si el monto es menor o igual a 0
-            o si supera el saldo disponible.
+            Deposita monto a saldo 
+
+            lanza error si monto es menor igual a cero
         """
         if monto <= 0:
             raise ValueError("El monto debe ser positivo mayor a cero")
@@ -50,10 +49,29 @@ class CuentaBancaria:
         except FileNotFoundError :
             self._saldo = 0
 
+    def registrar(self,ruta,tipo,monto):
+        """
+            Registra si se deposita o retira dinero y crea el archivo si es que no exite,
+            si existe registra los cambios
+        """
+        with open(ruta , "a", encoding="utf-8") as archivo:
+            linea = f"{tipo},{monto}\n"
+            archivo.write(linea)
+
+    def leer_movimientos(self, ruta):
+        """
+            Lee los movimientos del archivo registrado y los muestra de manera ordenada
+        """
+        movimientos = []
+        with open(ruta , "r", encoding="utf-8")as archivo:
+            for linea in archivo:
+                tipo, monto = linea.strip().split(",")
+                movimientos.append((tipo, int(monto)))
+        return movimientos
+
     def ver_saldo(self):
         """Devuelve el saldo actual."""
         return self._saldo
-   
 
 #Pruebas funcionanmiento archivos
 cuenta = CuentaBancaria()
@@ -66,6 +84,16 @@ print(nueva.ver_saldo())
 otra = CuentaBancaria()
 otra.cargar("no_existe.txt")
 print(otra.ver_saldo())   # 0, sin error
+
+cuenta = CuentaBancaria()
+cuenta.depositar(5000)
+cuenta.registrar("movimientos.txt", "deposito", 5000)
+cuenta.retirar(3000)
+cuenta.registrar("movimientos.txt", "retiro", 3000)
+
+movimientos = cuenta.leer_movimientos("movimientos.txt")
+for tipo, monto in movimientos:
+    print(f"{tipo}: ${monto}")
 
 
 #Pruebas depositar retirar 
