@@ -1,48 +1,83 @@
 class CuentaBancaria:
-    """Cuenta con saldo que permite depositar, retirar y consultar dinero.
-
-    El saldo parte en 0.
+    """
+        Cuenta con saldo que permite depositar, retirar y consultar dinero.
+ 
+        El saldo parte en 0.
     """
 
     def __init__(self):
         self._saldo = 0
 
-
     def depositar(self,monto):  
+        """ 
+            Resta el monto del saldo.
+        
+            Lanza ValueError si el monto es menor o igual a 0
+            o si supera el saldo disponible.
+        """
         if monto <= 0:
             raise ValueError("El monto debe ser positivo mayor a cero")
         self._saldo += monto
-        """Resta el monto del saldo.
-
-        Lanza ValueError si el monto es menor o igual a 0
-        o si supera el saldo disponible.
-        """
-
+        
     def retirar(self,monto):
+        """
+            Resta el monto del saldo.
+        
+            Lanza ValueError si el monto es menor o igual a 0
+            o si supera el saldo disponible.
+        """
         if monto <= 0:
             raise ValueError("El monto debe ser positivo mayor a cero")
         if monto > self._saldo:
             raise ValueError("El monto no debe superar al saldo")
         self._saldo -= monto
 
-    """Resta el monto del saldo.
-
-        Lanza ValueError si el monto es menor o igual a 0
-        o si supera el saldo disponible.
+    def guardar(self,ruta):
         """
+            Guarda el monto el saldo actual en el archivo indicado
+        """
+        with open(ruta,"w" ,encoding="utf-8") as archivo:
+            guardado = str(self._saldo)
+            archivo.write(guardado)
 
-    def saldo(self):
+    def cargar(self, ruta):
+        """
+            Carga archivo guardado y si el archivo no existe vuelve saldo a 0
+        """
+        try:
+            with open(ruta,"r" ,encoding="utf-8") as archivo:
+                self._saldo = int(archivo.read())
+        except FileNotFoundError :
+            self._saldo = 0
+
+    def ver_saldo(self):
+        """Devuelve el saldo actual."""
         return self._saldo
-    """Devuelve el saldo actual."""
-    
+   
+
+#Pruebas funcionanmiento archivos
+cuenta = CuentaBancaria()
+cuenta.depositar(5000)
+cuenta.guardar("saldo.txt")
+
+nueva = CuentaBancaria()
+nueva.cargar("saldo.txt")
+print(nueva.ver_saldo()) 
+otra = CuentaBancaria()
+otra.cargar("no_existe.txt")
+print(otra.ver_saldo())   # 0, sin error
+
+
+#Pruebas depositar retirar 
 cuenta = CuentaBancaria()
 cuenta.depositar(5000)
 cuenta.retirar(3000)
-print(cuenta.saldo())    
+print(cuenta.ver_saldo())    
 
 otra = CuentaBancaria()
-print(otra.saldo())     
+print(otra.ver_saldo())     
 
+#Pruebas try expect
 try:
     cuenta.retirar(50000)
 except ValueError as error:
