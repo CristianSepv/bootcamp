@@ -1,33 +1,46 @@
-def rut_valido(rut):
+def validar_rut(rut: str) -> bool:
     """
-    Valida rut verificador utilizando metodo 11 
-
-    La funcion se le ingresa el rut con o sin puntos y con guion,
-    y luego verifica si el rut dado es correcto o no como true or false y acepta k o K
+        Valida rut verificador utilizando modulo 11 
+    
+        Recibe un rut con o sin puntos y con guion,
+        y luego verifica si el rut dado es correcto o no como true/false y acepta k o K
     """
+    if not isinstance(rut, str):
+        raise TypeError("El rut debe ser un string")
+    if rut.count("-") != 1:
+        return False
 
-    numeros, verificador = rut.replace(".","").split("-")
-    numero_invertido = numeros[::-1]
-    total = 0
+    rut_base, verificador = rut.replace(".", "").upper().split("-")
+    if not rut_base.isdigit() or len(verificador) != 1 or verificador not in "0123456789K":
+        return False
+    
     multiplicador = 2
-    for numero in numero_invertido:
-        total += int(numero) * multiplicador 
-        multiplicador +=1
+    rut_suma = 0
+    for numero in rut_base[::-1]:
+        rut_total = int(numero) * multiplicador
+        rut_suma += rut_total
+        multiplicador += 1
         if multiplicador > 7:
             multiplicador = 2
-    resto = total % 11 
-    numero_calculado = 11- resto
-    if numero_calculado == 11:
-        numero_calculado = '0'
-    elif numero_calculado == 10:
-        numero_calculado ='K'
+    resto = rut_suma % 11
+    verificacion = 11 - resto
+
+    if verificacion == 11:
+        rut_verificacion = "0"
+    elif verificacion == 10:
+        rut_verificacion = "K"
     else:
-        numero_calculado = str(numero_calculado)
+        rut_verificacion = str(verificacion)
 
-    return numero_calculado == verificador.upper()
+    return rut_verificacion == verificador
 
-print(rut_valido("12.345.678-5"))   # True
-print(rut_valido("12.345.678-9"))   # False
-print(rut_valido("12345678-5"))     # True
-print(rut_valido("10.000.013-K"))   # True
-print(rut_valido("10.000.013-k"))   # True
+    
+print(validar_rut("12.345.678-5"))
+print(validar_rut("12345678-5"))
+print(validar_rut("123456785"))  # False: falta el guion
+print(validar_rut("12345678-9"))
+print(validar_rut("10000013-K"))  # True
+print(validar_rut("10000013-k"))  # True: minúscula
+print(validar_rut("10000004-0"))  # True
+print(validar_rut("10000004-K"))  # False
+print(validar_rut(123456788))
